@@ -1,0 +1,3 @@
+TODO:
+   -add cmdline parameter so you can run program for specified assembly (instead of running it for all assemblies)
+   -add cmdline parameter so you can run program for specified chromosome (instead of running it for all chromosomes)
