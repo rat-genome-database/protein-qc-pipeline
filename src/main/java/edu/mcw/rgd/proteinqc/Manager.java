@@ -1,14 +1,14 @@
-package edu.mcw.rgd.pipelines.proteinqc;
+package edu.mcw.rgd.proteinqc;
 
 
-        import edu.mcw.rgd.dao.impl.*;
-        import edu.mcw.rgd.datamodel.*;
-        import org.apache.commons.logging.Log;
-        import org.apache.commons.logging.LogFactory;
-        import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-        import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
-        import org.springframework.core.io.FileSystemResource;
-        import java.util.*;
+import edu.mcw.rgd.dao.impl.*;
+import edu.mcw.rgd.datamodel.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.core.io.FileSystemResource;
+import java.util.*;
 
 /**
  * Created by jthota on 10/29/2015.

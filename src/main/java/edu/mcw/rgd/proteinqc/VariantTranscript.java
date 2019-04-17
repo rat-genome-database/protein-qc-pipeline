@@ -1,4 +1,4 @@
-package edu.mcw.rgd.pipelines.proteinqc;
+package edu.mcw.rgd.proteinqc;
 
 /**
  * Created by jthota on 12/4/2015.

@@ -1,4 +1,4 @@
-package edu.mcw.rgd.pipelines.proteinqc;
+package edu.mcw.rgd.proteinqc;
 
 import edu.mcw.rgd.dao.DataSourceFactory;
 import edu.mcw.rgd.datamodel.Gene;

@@ -1,3 +1,9 @@
+1.2.0 - 2019-04-17
+   moved from ant to gradle
+
+1.1.0 - 2018-09-25
+   moved from subversion to github
+
 TODO:
    -add cmdline parameter so you can run program for specified assembly (instead of running it for all assemblies)
    -add cmdline parameter so you can run program for specified chromosome (instead of running it for all chromosomes)

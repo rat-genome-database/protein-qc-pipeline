@@ -1,4 +1,4 @@
-package edu.mcw.rgd.pipelines.proteinqc;
+package edu.mcw.rgd.proteinqc;
 
 import edu.mcw.rgd.dao.impl.SequenceDAO;
 import edu.mcw.rgd.datamodel.Chromosome;
@@ -47,30 +47,25 @@ public class TranscriptAnalysisMethods {
                         int transcript_rgd_id = vt.getTranscipt_rgd_id();
                         int variant_id = vt.getVariant_id();
                         int variant_transcript_id = vt.getVariant_transcript_id();
-                        List<Sequence> sequences = sdao.getObjectSequences(transcript_rgd_id, 12);
+                        List<Sequence> sequences = sdao.getObjectSequences(transcript_rgd_id, "ncbi_protein");
                         if (!sequences.isEmpty()) {
                             for (Sequence sequence : sequences) {
-                                if (sequence.getSeqTypeKey() == 12) {
-                                    String RefSeq = sequence.getCloneSeq();
-                                    if (RefSeq.equals(aaSeq)) {
-                                        equal = equal + 1;
-                                    } else {
-                                        notEqual = notEqual + 1;
-                                        int stopCodon = 0;
-                                        for (int j = 0; j < aaSeq.length() && j < RefSeq.length(); j++) {
-                                            if (aaSeq.charAt(j) != RefSeq.charAt(j) && aaSeq.charAt(j) == '*')
-                                                stopCodon = stopCodon + 1;
-                                        }
-                                        if (stopCodon > 1) {
-                                            multipleStopCodonSeq = multipleStopCodonSeq + 1;
-                                            transcriptRgdIdList.add(transcript_rgd_id);
-                                            variantIdList.add(variant_id);
-                                            variantTranscriptIdList.add(variant_transcript_id);
-                                        }
-                                    }
+                                String RefSeq = sequence.getSeqData();
+                                if (RefSeq.equals(aaSeq)) {
+                                    equal = equal + 1;
                                 } else {
-                                    if (sequences.size() <= 1 && sequence.getSeqTypeKey() != 12)
-                                        noProteinSeq = noProteinSeq + 1;
+                                    notEqual = notEqual + 1;
+                                    int stopCodon = 0;
+                                    for (int j = 0; j < aaSeq.length() && j < RefSeq.length(); j++) {
+                                        if (aaSeq.charAt(j) != RefSeq.charAt(j) && aaSeq.charAt(j) == '*')
+                                            stopCodon = stopCodon + 1;
+                                    }
+                                    if (stopCodon > 1) {
+                                        multipleStopCodonSeq = multipleStopCodonSeq + 1;
+                                        transcriptRgdIdList.add(transcript_rgd_id);
+                                        variantIdList.add(variant_id);
+                                        variantTranscriptIdList.add(variant_transcript_id);
+                                    }
                                 }
                             }
                         } else {

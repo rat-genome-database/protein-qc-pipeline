@@ -1,15 +1,12 @@
-package edu.mcw.rgd.pipelines.proteinqc;
+package edu.mcw.rgd.proteinqc;
 
 import edu.mcw.rgd.dao.AbstractDAO;
 import edu.mcw.rgd.dao.DataSourceFactory;
 import edu.mcw.rgd.datamodel.Chromosome;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,11 +14,12 @@ import java.util.List;
  * Created by jthota on 11/30/2015.
  */
 
-public class ChromosomeDAO  {
+public class ChromosomeDAO extends AbstractDAO {
     public List<Chromosome> getChromosomes(int map_key) throws Exception
     {
 
-        ChromosomeMapper q = new ChromosomeMapper();
+        String sql = "select * from chromosomes where map_key = ?";
+        ChromosomeMapper q = new ChromosomeMapper(getDataSource(), sql);
         List<Chromosome> chrList = new ArrayList<>();
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -29,7 +27,6 @@ public class ChromosomeDAO  {
 
         try {
             conn= DataSourceFactory.getInstance().getDataSource().getConnection();
-            String sql = "select * from chromosomes where map_key = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1,map_key);
             rs = pstmt.executeQuery();

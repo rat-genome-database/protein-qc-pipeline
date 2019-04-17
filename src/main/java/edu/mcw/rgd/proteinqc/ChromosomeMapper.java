@@ -1,17 +1,22 @@
-package edu.mcw.rgd.pipelines.proteinqc;
+package edu.mcw.rgd.proteinqc;
 
 import edu.mcw.rgd.datamodel.Chromosome;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.springframework.jdbc.object.MappingSqlQuery;
 
+import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
  * Created by jthota on 11/30/2015.
  */
-public class ChromosomeMapper implements ParameterizedRowMapper<Chromosome> {
-    public ChromosomeMapper(){}
-    public Chromosome mapRow(ResultSet rs, int rowNum) throws SQLException {
+public class ChromosomeMapper  extends MappingSqlQuery {
+
+    public ChromosomeMapper(DataSource ds, String query) {
+        super(ds, query);
+    }
+
+    public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
         Chromosome obj = new Chromosome();
         obj.setMapKey(rs.getInt("map_key"));
         obj.setChromosome(rs.getString("chromosome"));

@@ -1,4 +1,4 @@
-package edu.mcw.rgd.pipelines.proteinqc;
+package edu.mcw.rgd.proteinqc;
 
 import java.util.List;
 import java.util.Set;
