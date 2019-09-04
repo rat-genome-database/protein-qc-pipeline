@@ -2,7 +2,9 @@ package edu.mcw.rgd.proteinqc;
 
 import edu.mcw.rgd.dao.DataSourceFactory;
 import edu.mcw.rgd.dao.impl.MapDAO;
+import edu.mcw.rgd.dao.impl.SequenceDAO;
 import edu.mcw.rgd.datamodel.Chromosome;
+import edu.mcw.rgd.datamodel.Sequence;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
@@ -12,15 +14,19 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class DAO {
 
     private MapDAO mapDAO = new MapDAO();
+    private SequenceDAO seqDAO = new SequenceDAO();
 
     public String getMapName(int mapKey) throws Exception {
         return mapDAO.getMap(mapKey).getName();
+    }
+
+    public List<Chromosome> getChromosomes(int map_key) throws Exception {
+        return mapDAO.getChromosomes(map_key);
     }
 
     public Genes getGeneSymbols(int transcript_rgd_id) throws Exception {
@@ -54,44 +60,6 @@ public class DAO {
 
     }
 
-    public List<Chromosome> getChromosomes(int map_key) throws Exception {
-
-        String sql = "select * from chromosomes where map_key = ?";
-        ChromosomeMapper q = new ChromosomeMapper(DataSourceFactory.getInstance().getDataSource(), sql);
-        List<Chromosome> chrList = new ArrayList<>();
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-
-        try {
-            conn= DataSourceFactory.getInstance().getDataSource().getConnection();
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1,map_key);
-            rs = pstmt.executeQuery();
-            while(rs.next()){
-                Chromosome chr= (Chromosome) q.mapRow(rs,1);
-                chrList.add(chr);
-            }
-
-
-
-        }catch (Exception e){} finally{
-            if (pstmt != null) {
-                pstmt.close();
-            }
-            if (rs != null) {
-                rs.close();
-            }
-
-            if (conn != null) {
-                conn.close();
-            }
-        }
-
-        return chrList;
-    }
-
-
     public List getVariantTranscripts(String chr, int mapkey) throws Exception{
         String sql = "SELECT vt.* FROM variant_transcript vt, variant v WHERE v.variant_id = vt.variant_id and sample_id in (select sample_id from sample where map_key=?) and chromosome = ? and full_ref_aa is not null";
         JdbcTemplate jt = new JdbcTemplate(DataSourceFactory.getInstance().getCarpeNovoDataSource());
@@ -115,6 +83,10 @@ public class DAO {
         su.declareParameter(new SqlParameter(4));
         su.compile();
         return su.update(new Object[]{variant_transcript_id});
+    }
+
+    public List<Sequence> getNcbiProteinSequences(int transcriptRgdId) throws Exception {
+        return seqDAO.getObjectSequences(transcriptRgdId, "ncbi_protein");
     }
 }
 

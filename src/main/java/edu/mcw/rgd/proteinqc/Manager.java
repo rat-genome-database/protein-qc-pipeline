@@ -52,13 +52,13 @@ public class Manager {
         System.out.println("    -normalRun normal run");
         System.exit(-1);
     }
+
     /**
      *
      * @param mode if true no changes will be made in the database, but you will still get a report
      *               with the changes that will be made in normal mode
      * @throws Exception *** EXTREMELY USEFUL TO FIND OUT WHAT WRONG HAPPENED TO YOUR PROGRAM *** DO NOT IGNORE THEM ***
      */
-
     public void run(String mode) throws Exception{
         DAO dao = new DAO();
         String MODE = mode.toLowerCase();
@@ -79,7 +79,7 @@ public class Manager {
 
                  TranscriptAnalysisMethods transcriptAnalysisMethods = new TranscriptAnalysisMethods();
                  /*GET MULTI STOP CODON TRANSCRIPTS FOR ONE WHOLE ASSEMBLY AT A TIME*/
-                 List<TranscriptData> transcriptDataList= transcriptAnalysisMethods.getMultiStopCodonTranscripts(mapkey);
+                 List<TranscriptData> transcriptDataList= transcriptAnalysisMethods.getMultiStopCodonTranscripts(mapkey, dao);
                  for(TranscriptData trData: transcriptDataList){
                      Set<Integer> multistopcodonTranscritIds = new HashSet<>(trData.getMultiStopCodonTranscriptRgdIds());
                      List<Integer> multistopcodonVariantTranscriptIds = trData.getMultiStopCoodnVariantTranscriptIds();
@@ -135,7 +135,7 @@ public class Manager {
                 log.info("GENERATING MULTI STOP CODON REPORT FOR  " + mapKeyName + "  CHROMOSOME WISE...");
                 log.info("=========================================================================================");
             TranscriptAnalysisMethods transcriptAnalysisMethods = new TranscriptAnalysisMethods();
-            List<TranscriptData> transcriptDataListAllChromosomes= transcriptAnalysisMethods.getMultiStopCodonTranscripts(mapkey);
+            List<TranscriptData> transcriptDataListAllChromosomes= transcriptAnalysisMethods.getMultiStopCodonTranscripts(mapkey, dao);
                  for(TranscriptData trDataEachChromosome: transcriptDataListAllChromosomes){
                      String chr = trDataEachChromosome.getChromosome();
                      log.info("CHROMOSOME: "+ chr +"\n====================================================================");
@@ -179,8 +179,6 @@ public class Manager {
          }
                  log.info("DATABASE UPDATE COMPLETED ON ALL ASSEBLIES FOR REPORTED LIST OF GENES OF MULTISTOP CODON TRANSCRIPTS");
             System.out.println("DATABASE UPDATE COMPLETED ON ALL ASSEBLIES FOR REPORTED LIST OF GENES OF MULTISTOP CODON TRANSCRIPTS");
-        } else {
-            System.out.println("Please enter the MODE OPTIONS as below \n\t\t -dryrun \n\t\t -normalrun  \n as arguments");
         }
          }
     }

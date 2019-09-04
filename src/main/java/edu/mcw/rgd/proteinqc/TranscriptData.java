@@ -14,7 +14,6 @@ public class TranscriptData {
     private int missingRefSeqCount;
     private Set<Integer> missingRefSeqIds;
     private int noProteinSeqCount;
-    private Set<Integer> noProteinSeqIds;
     private int missingVtranscriptCount;
     private int emptyVTCount;
 
@@ -35,8 +34,6 @@ public class TranscriptData {
     public Set<Integer> getMissingRefSeqIds(){ return this.missingRefSeqIds;}
     public void setNoProteinSeqCount(int noProteinSeqCount){this.noProteinSeqCount=noProteinSeqCount;}
     public int getNoProteinSeqCount(){return this.noProteinSeqCount;}
-    public void setNoProteinSeqIds(Set<Integer> noProteinSeqIds){this.noProteinSeqIds = noProteinSeqIds;}
-    public Set<Integer> getNoProteinSeqIds(){return this.noProteinSeqIds;}
     public void setMissingVtranscriptCount(int missingVtranscriptCount){this.missingVtranscriptCount= missingVtranscriptCount;}
     public int getMissingVtranscriptCount(){return this.missingVtranscriptCount;}
     public void setEmptyVTCount(int emptyVTCount){this.emptyVTCount=emptyVTCount;}
