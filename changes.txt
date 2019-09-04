@@ -1,3 +1,6 @@
+2019-09-04
+   centralized DAO code
+
 1.2.0 - 2019-04-17
    moved from ant to gradle
 

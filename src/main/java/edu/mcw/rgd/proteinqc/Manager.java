@@ -1,8 +1,5 @@
 package edu.mcw.rgd.proteinqc;
 
-
-import edu.mcw.rgd.dao.impl.*;
-import edu.mcw.rgd.datamodel.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -20,17 +17,13 @@ public class Manager {
 
     public static void main(String[] args) throws Exception {
         String mode = null;
-        if( args.length==0 ) {
-            printUsageAndExit();
-
-        }
         DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
         new XmlBeanDefinitionReader(bf).loadBeanDefinitions(new FileSystemResource("properties/AppConfigure.xml"));
         Manager manager = (Manager) (bf.getBean("manager"));
         System.out.println(manager.getVersion());
+
         // parse cmdline
         for( String arg: args ) {
-            if(!arg.isEmpty()){
             switch(arg.toLowerCase()) {
                 case "-dryrun":
                     mode = "dryRun";
@@ -39,17 +32,20 @@ public class Manager {
                     mode = "normalRun";
                     break;
                 default:
-                    mode="none";
                     break;
-            }}
+            }
         }
+        if( mode==null ) {
+            manager.printUsageAndExit();
+        }
+
         try { manager.run(mode); } catch(Exception e) {
             e.printStackTrace();
-            throw e; }
+            throw e;
+        }
     }
-   static void printUsageAndExit() {
-        System.out.println("ProteinQcPipeline ver 1.0, Jan 13, 2016");
-        System.out.println("  Copyright Jyothi Xxx");
+
+    void printUsageAndExit() {
         System.out.println("Usage:");
         System.out.println("  java -jar ProteinQcPipeline.jar -dryRun|-normalRun");
         System.out.println("    -dryRun    simulate the run, no changes are made to database (default mode)");
@@ -64,10 +60,7 @@ public class Manager {
      */
 
     public void run(String mode) throws Exception{
-        VariantTranscriptDAO variantTranscriptDAO = new VariantTranscriptDAO();
-        GeneDAO geneDAO = new GeneDAO();
-        MapDAO mapDAO = new MapDAO();
-        Genes genes = new Genes();
+        DAO dao = new DAO();
         String MODE = mode.toLowerCase();
         List<Integer> mapkeys = new ArrayList<>(Arrays.asList(60, 70, 360));
         if(MODE.equals("dryrun")){
@@ -78,7 +71,7 @@ public class Manager {
              log.info("**PROTEIN SEQUENCE ANALYSIS TO GENERATE MULTI STOP CODON SEQUENCE DATA FOR**" +" \n\t\t" + " QUALITY CONTROL ON ALL EXISTING RGD ASSEMBLIES ****");
              log.info("==================================================================================================================================");
              for(int mapkey : mapkeys) {
-                 String mapKeyName = mapDAO.getMap(mapkey).getName();
+                 String mapKeyName = dao.getMapName(mapkey);
                  System.out.println("GENERATING MULTI STOP CODON REPORT FOR  " + mapKeyName + "  CHROMOSOME WISE...");
                  System.out.println("=========================================================================================");
                  log.info("GENERATING MULTI STOP CODON REPORT FOR  " + mapKeyName + "  CHROMOSOME WISE...");
@@ -107,7 +100,7 @@ public class Manager {
                      log.info("MISSING REFSEQ COUNT: " + missingRefSeqCount);
                      log.info("**********MISSING REFSEQ TRANSCRIPT RGD IDS and SYMBOLS***********");
                      for(int id: missingRefSeqIds){
-                         genes = geneDAO.getGeneSymbols(id);
+                         Genes genes = dao.getGeneSymbols(id);
                          String geneSymbol= genes.getGeneSymbol();
                          log.info("                " + id + "                 " + geneSymbol);
                      }
@@ -118,7 +111,7 @@ public class Manager {
                         log.info("******MULTI STOP CODON TranscriptRGDIds and GENE Symbols on Chromosome: " + chr +"**********");
                         log.info("Transcript RGDID **** GENE SYMBOL ***** PROTEIN ACC ID");
                         for(int trId:multistopcodonTranscritIds){
-                        genes = geneDAO.getGeneSymbols(trId);
+                        Genes genes = dao.getGeneSymbols(trId);
                             String geneSymbol = genes.getGeneSymbol();
                             String proteinAccId=genes.getProteinAccId();
                         log.info("        " + trId + "        " + geneSymbol + "       " + proteinAccId);
@@ -136,7 +129,7 @@ public class Manager {
             log.info("**PROTEIN SEQUENCE ANALYSIS TO GENERATE MULTI STOP CODON SEQUENCE DATA FOR**" + " \n\t\t" + " QUALITY CONTROL ON ALL EXISTING RGD ASSEMBLIES ****");
             log.info("=================================================================================================================================");
             for(int mapkey : mapkeys) {
-                String mapKeyName=mapDAO.getMap(mapkey).getName();
+                String mapKeyName=dao.getMapName(mapkey);
             System.out.println("GENERATING MULTI STOP CODON REPORT FOR  " + mapKeyName + "  CHROMOSOME WISE...");
             System.out.println("=========================================================================================");
                 log.info("GENERATING MULTI STOP CODON REPORT FOR  " + mapKeyName + "  CHROMOSOME WISE...");
@@ -159,7 +152,7 @@ public class Manager {
                      log.info("Missing REFSEQ COUNT: " + missingRefSeqCount);
                      log.info("**********MISSING REFSEQ TRANSCRIPT RGD IDS and SYMBOLS***********");
                      for(int id: missingRefSeqIds){
-                         genes = geneDAO.getGeneSymbols(id);
+                         Genes genes = dao.getGeneSymbols(id);
                          String geneSymbol=genes.getGeneSymbol();
                          log.info("                " + id + "                 " + geneSymbol);
                      }
@@ -170,14 +163,14 @@ public class Manager {
                          log.info("Transcript RGDID **** GENE SYMBOL ***** PROTEIN ACC ID");
                         Set<Integer> multistopcodonTranscritIds =trDataEachChromosome.getMultiStopCodonTranscriptRgdIds();
                         for(int trId:multistopcodonTranscritIds){
-                            genes = geneDAO.getGeneSymbols(trId);
+                            Genes genes = dao.getGeneSymbols(trId);
                             String geneSymbol=genes.getGeneSymbol();
                             String proteinAccId= genes.getProteinAccId();
                             log.info("        " + trId + "        " + geneSymbol + "       " + proteinAccId);
                         }
                     System.out.println("UPDATING THE VARIANT TRANSCRIPT DATA of CHROMOSOME: " +chr + ".....");
                          for(int variantTranscriptId: multiStopCodonVariantTranscriptIds){
-                            variantTranscriptDAO.updateVariantTranscript(variantTranscriptId);
+                            dao.updateVariantTranscript(variantTranscriptId);
                         }
                     System.out.println("UPDATE COMPLETED FOR CHROMOSOME: " + chr + "See the MAIN LOG FOR UPDATED GENEs LIST");
                          log.info("UPDATE COMPLETED FOR CHROMOSOME: " + chr);

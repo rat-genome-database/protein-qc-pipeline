@@ -8,7 +8,6 @@ public class VariantTranscript {
     private int variant_id;
     private int variant_transcript_id;
     private String aaSequence;
-    private String nucSequence;
 
     public void setTranscript_rgd_id(int transcript_rgd_id){ this.transcript_rgd_id = transcript_rgd_id;}
     public int getTranscipt_rgd_id(){        return this.transcript_rgd_id;    }
@@ -18,6 +17,4 @@ public class VariantTranscript {
     public int getVariant_transcript_id(){return this.variant_transcript_id;}
     public void setAaSequence(String aaSequence){ this.aaSequence = aaSequence;}
     public String getAaSequence(){return this.aaSequence;}
-    public void setNucSequence(String nucSequence){this.nucSequence = nucSequence;}
-    public String getNucSequence(){return this.nucSequence;}
 }
