@@ -2,6 +2,7 @@ package edu.mcw.rgd.proteinqc;
 
 import edu.mcw.rgd.datamodel.Chromosome;
 import edu.mcw.rgd.datamodel.Sequence;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 
@@ -10,11 +11,14 @@ import java.util.*;
  */
 public class TranscriptAnalysisMethods {
 
+    Logger log = Logger.getLogger("main");
+
     public List<TranscriptData> getMultiStopCodonTranscripts(int mapkey, DAO dao) throws Exception {
         List<TranscriptData> transcriptDatas = new ArrayList<>();
         List<VariantTranscript> vtList;
         List<Chromosome> chrList = dao.getChromosomes(mapkey);
         for (Chromosome chromosome : chrList) {
+            log.debug("chr "+chromosome.getChromosome());
             int equal = 0;
             int notEqual = 0;
             int emptySeq = 0;
@@ -29,6 +33,7 @@ public class TranscriptAnalysisMethods {
             List<Integer> missingRefSeqIds = new ArrayList<>();
             String chr = chromosome.getChromosome();
             vtList = dao.getVariantTranscripts(chr, mapkey);
+            log.debug("  vtList size "+vtList.size());
 
             for (VariantTranscript vt : vtList) {
                 if (vt != null) {

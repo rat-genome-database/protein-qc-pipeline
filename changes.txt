@@ -1,3 +1,6 @@
+2019-09-19
+   replaced System.out.println statements with log4j logging
+
 2019-09-04
    centralized DAO code
 
