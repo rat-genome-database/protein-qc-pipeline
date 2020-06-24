@@ -127,7 +127,7 @@ public class Manager {
         }
 
         if( isNormalMode ) {
-            log.info("DATABASE UPDATE COMPLETED ON ALL ASSEBLIES FOR REPORTED LIST OF GENES OF MULTISTOP CODON TRANSCRIPTS");
+            log.info("DATABASE UPDATE COMPLETED ON ALL ASSEMBLIES FOR REPORTED LIST OF GENES OF MULTISTOP CODON TRANSCRIPTS");
         } else {
             log.info("REPORT GENERATION COMPLETED.");
             log.info(" dryRun completed Successfully");

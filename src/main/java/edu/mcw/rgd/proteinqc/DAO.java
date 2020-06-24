@@ -30,34 +30,21 @@ public class DAO {
     }
 
     public Genes getGeneSymbols(int transcript_rgd_id) throws Exception {
-        Connection conn = null;
-        ResultSet rs = null;
-        PreparedStatement pstmt = null;
         Genes genes=new Genes();
 
-        try {
+        try( Connection conn = mapDAO.getConnection() ){
 
-            conn = DataSourceFactory.getInstance().getDataSource().getConnection();
             String sql = "select * from Transcripts t, genes g where t.gene_rgd_id= g.rgd_id and transcript_rgd_id = ?";
-            pstmt = conn.prepareStatement(sql);
+            PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, transcript_rgd_id);
-            rs = pstmt.executeQuery();
+            ResultSet rs = pstmt.executeQuery();
             while(rs.next()){
                 genes.setGeneSymbol(rs.getString("gene_symbol"));
                 genes.setProteinAccId(rs.getString("protein_acc_id"));
 
             }
-        } catch (Exception e) {
-
-        }finally{
-
-            rs.close();
-            pstmt.close();
-            conn.close();
-
         }
         return genes;
-
     }
 
     public List getVariantTranscripts(String chr, int mapkey) throws Exception{
