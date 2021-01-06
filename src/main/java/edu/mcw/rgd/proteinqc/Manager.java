@@ -93,21 +93,23 @@ public class Manager {
 
                 log.info("Missing RefSeq Count: " + missingRefSeqCount);
                 if( missingRefSeqCount>0 ) {
-                    log.info("Please Update the Database for Missing RefSeq and Run this CODE again.");
-                    log.info("See the MAIN LOG FOR MORE INFO. ");
-                    log.info("**********MISSING REFSEQ TRANSCRIPT RGD IDS and SYMBOLS***********");
+                    log.info("   Please Update the Database for Missing RefSeq and Run this CODE again.");
+                    log.info("   See the MAIN LOG FOR MORE INFO. ");
+                }
+                if( missingRefSeqCount>0 ) {
+                    log.debug("**********MISSING REFSEQ TRANSCRIPT RGD IDS and SYMBOLS***********");
                     for (int id : missingRefSeqIds) {
                         Genes genes = dao.getGeneSymbols(id);
                         String geneSymbol = genes.getGeneSymbol();
-                        log.info("                " + id + "                 " + geneSymbol);
+                        log.debug("                " + id + "                 " + geneSymbol);
                     }
-                    log.info("");
+                    log.debug("");
                 }
 
                 log.info("TOTAL NUMBER OF MULTI STOP CODON SEQUENCES OF CHROMOSOME " + chr + " : " + multistopcodonVariantCount);
                 if (multistopcodonVariantCount>0) {
-                    log.info("******MULTI STOP CODON TranscriptRGDIds and GENE Symbols on Chromosome: " + chr +"**********");
-                    log.info("Variant RGD ID **** Transcript RGD ID **** GENE SYMBOL ***** PROTEIN ACC ID");
+                    log.debug("******MULTI STOP CODON TranscriptRGDIds and GENE Symbols on Chromosome: " + chr +"**********");
+                    log.debug("   Variant RGD ID **** Transcript RGD ID **** GENE SYMBOL ***** PROTEIN ACC ID");
 
                     for (String id : multiStopCodonVariantIds) {
                         int splitPos = id.indexOf(",");
@@ -117,13 +119,13 @@ public class Manager {
                         Genes genes = dao.getGeneSymbols(transcriptRgdId);
                         String geneSymbol=genes.getGeneSymbol();
                         String proteinAccId= genes.getProteinAccId();
-                        log.info(variantRgdId+"        " + transcriptRgdId + "        " + geneSymbol + "       " + proteinAccId);
+                        log.debug("   "+variantRgdId+"        " + transcriptRgdId + "        " + geneSymbol + "       " + proteinAccId);
 
                         if( isNormalMode ) {
                             dao.updateVariantTranscript(variantRgdId, transcriptRgdId, mapkey);
                         }
                     }
-                    log.info("");
+                    log.debug("");
                 }
             }
         }
