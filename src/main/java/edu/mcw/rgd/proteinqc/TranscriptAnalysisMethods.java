@@ -27,9 +27,7 @@ public class TranscriptAnalysisMethods {
             int emptyVT = 0;
             int i = 0;
             int multipleStopCodonSeq = 0;
-            List<Integer> transcriptRgdIdList = new ArrayList<>();
-            List<Integer> variantTranscriptIdList = new ArrayList<>();
-            List<Integer> variantIdList = new ArrayList<>();
+            Set<String> variantTranscriptIdSet = new HashSet<>(); // 'variantRgdId,transcriptRgdId'
             List<Integer> missingRefSeqIds = new ArrayList<>();
             String chr = chromosome.getChromosome();
             vtList = dao.getVariantTranscripts(chr, mapkey);
@@ -43,9 +41,8 @@ public class TranscriptAnalysisMethods {
                     if (lastCharacter.equals("*")) {
                         aaSeq = aminoAcidSeq.substring(0, aminoAcidSeq.length() - 1);
                     } else aaSeq = aminoAcidSeq;
-                    int transcript_rgd_id = vt.getTranscipt_rgd_id();
-                    int variant_id = vt.getVariant_id();
-                    int variant_transcript_id = vt.getVariant_transcript_id();
+                    int transcript_rgd_id = vt.getTranscriptRgdId();
+                    int variant_rgd_id = vt.getVariantRgdId();
                     List<Sequence> sequences = dao.getNcbiProteinSequences(transcript_rgd_id);
                     if (!sequences.isEmpty()) {
                         for (Sequence sequence : sequences) {
@@ -61,9 +58,7 @@ public class TranscriptAnalysisMethods {
                                 }
                                 if (stopCodon > 1) {
                                     multipleStopCodonSeq = multipleStopCodonSeq + 1;
-                                    transcriptRgdIdList.add(transcript_rgd_id);
-                                    variantIdList.add(variant_id);
-                                    variantTranscriptIdList.add(variant_transcript_id);
+                                    variantTranscriptIdSet.add(variant_rgd_id+","+transcript_rgd_id);
                                 }
                             }
                         }
@@ -77,14 +72,10 @@ public class TranscriptAnalysisMethods {
                     transcripts = transcripts + 1;
                 }
             }
-            Set<Integer> transcriptRgdIdSet = new HashSet<>(transcriptRgdIdList);
-            Set<Integer> variantIdSet = new HashSet<>(variantIdList);
             Set<Integer> missingRefSeqIdsSet = new HashSet<>(missingRefSeqIds);
 
             TranscriptData transcriptData = new TranscriptData();
-            transcriptData.setMultiStopCodonTranscriptRgdIds(transcriptRgdIdSet);
-            transcriptData.setMultiStopCodonVariantIds(variantIdSet);
-            transcriptData.setMultiStopCoodnVariantTranscriptIds(variantTranscriptIdList);
+            transcriptData.setMultiStopCodonVariantTranscriptIds(variantTranscriptIdSet);
             transcriptData.setChromosome(chr);
             transcriptData.setMissingRefSeqCount(emptySeq);
             transcriptData.setMissingRefSeqIds(missingRefSeqIdsSet);

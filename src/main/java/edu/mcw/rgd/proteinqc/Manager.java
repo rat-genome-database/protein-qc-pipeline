@@ -1,5 +1,6 @@
 package edu.mcw.rgd.proteinqc;
 
+import edu.mcw.rgd.process.Utils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
@@ -39,7 +40,7 @@ public class Manager {
         }
 
         try { manager.run(mode); } catch(Exception e) {
-            e.printStackTrace();
+            Utils.printStackTrace(e, manager.log);
             throw e;
         }
     }
@@ -72,7 +73,7 @@ public class Manager {
         log.info("==================================================================================================================================");
 
         DAO dao = new DAO();
-        List<Integer> mapkeys = new ArrayList<>(Arrays.asList(60, 70, 360));
+        List<Integer> mapkeys = new ArrayList<>(Arrays.asList(70, 60, 360));
         for(int mapkey : mapkeys) {
             String mapKeyName = dao.getMapName(mapkey);
             log.info("GENERATING MULTI STOP CODON REPORT FOR  " + mapKeyName + "  CHROMOSOME WISE...");
@@ -85,13 +86,11 @@ public class Manager {
                 String chr = trData.getChromosome();
                 log.info("CHROMOSOME: " + chr);
                 log.info("====================================================================");
-                List<Integer> multiStopCodonVariantTranscriptIds = trData.getMultiStopCoodnVariantTranscriptIds();
+                Set<String> multiStopCodonVariantIds = trData.getMultiStopCodonVariantTranscriptIds();
                 Set<Integer> missingRefSeqIds = trData.getMissingRefSeqIds();
                 int missingRefSeqCount = trData.getMissingRefSeqCount();
-                int multistopcodonVariantCount = multiStopCodonVariantTranscriptIds.size();
-                int multistopcodonGeneCount = trData.getMultiStopCodonTranscriptRgdIds().size();
+                int multistopcodonVariantCount = multiStopCodonVariantIds.size();
                 log.info("TOTAL NUMBER OF MULTI STOP CODON SEQUENCES OF CHROMOSOME " + chr + " : " + multistopcodonVariantCount);
-                log.info("Multi Stop Codon GENE COUNT" + multistopcodonGeneCount);
                 log.info("Missing RefSeq Count: " + missingRefSeqCount);
                 log.info("Please Update the Database for Missing RefSeq and Run this CODE again.");
                 log.info("See the MAIN LOG FOR MORE INFO. ");
@@ -105,22 +104,21 @@ public class Manager {
                     continue;
                 } else {
                     log.info("******MULTI STOP CODON TranscriptRGDIds and GENE Symbols on Chromosome: " + chr +"**********");
-                    log.info("Transcript RGDID **** GENE SYMBOL ***** PROTEIN ACC ID");
+                    log.info("Variant RGD ID **** Transcript RGD ID **** GENE SYMBOL ***** PROTEIN ACC ID");
 
-                    Set<Integer> multistopcodonTranscritIds =trData.getMultiStopCodonTranscriptRgdIds();
-                    for(int trId:multistopcodonTranscritIds){
-                        Genes genes = dao.getGeneSymbols(trId);
+                    for (String id : multiStopCodonVariantIds) {
+                        int splitPos = id.indexOf(",");
+                        int variantRgdId = Integer.parseInt(id.substring(0, splitPos));
+                        int transcriptRgdId = Integer.parseInt(id.substring(splitPos+1));
+
+                        Genes genes = dao.getGeneSymbols(transcriptRgdId);
                         String geneSymbol=genes.getGeneSymbol();
                         String proteinAccId= genes.getProteinAccId();
-                        log.info("        " + trId + "        " + geneSymbol + "       " + proteinAccId);
-                    }
+                        log.info(variantRgdId+"        " + transcriptRgdId + "        " + geneSymbol + "       " + proteinAccId);
 
-                    if( isNormalMode ) {
-                        log.debug("UPDATING THE VARIANT TRANSCRIPT DATA of CHROMOSOME: " + chr + ".....");
-                        for (int variantTranscriptId : multiStopCodonVariantTranscriptIds) {
-                            dao.updateVariantTranscript(variantTranscriptId);
+                        if( isNormalMode ) {
+                            dao.updateVariantTranscript(variantRgdId, transcriptRgdId, mapkey);
                         }
-                        log.info("UPDATE COMPLETED FOR CHROMOSOME: " + chr + "See the MAIN LOG FOR UPDATED GENEs LIST");
                     }
                 }
             }
