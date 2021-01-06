@@ -73,7 +73,7 @@ public class Manager {
         log.info("==================================================================================================================================");
 
         DAO dao = new DAO();
-        List<Integer> mapkeys = new ArrayList<>(Arrays.asList(70, 60, 360));
+        List<Integer> mapkeys = new ArrayList<>(Arrays.asList(60, 70, 360));
         for(int mapkey : mapkeys) {
             String mapKeyName = dao.getMapName(mapkey);
             log.info("GENERATING MULTI STOP CODON REPORT FOR  " + mapKeyName + "  CHROMOSOME WISE...");
@@ -90,19 +90,22 @@ public class Manager {
                 Set<Integer> missingRefSeqIds = trData.getMissingRefSeqIds();
                 int missingRefSeqCount = trData.getMissingRefSeqCount();
                 int multistopcodonVariantCount = multiStopCodonVariantIds.size();
-                log.info("TOTAL NUMBER OF MULTI STOP CODON SEQUENCES OF CHROMOSOME " + chr + " : " + multistopcodonVariantCount);
+
                 log.info("Missing RefSeq Count: " + missingRefSeqCount);
-                log.info("Please Update the Database for Missing RefSeq and Run this CODE again.");
-                log.info("See the MAIN LOG FOR MORE INFO. ");
-                log.info("**********MISSING REFSEQ TRANSCRIPT RGD IDS and SYMBOLS***********");
-                for (int id : missingRefSeqIds) {
-                    Genes genes = dao.getGeneSymbols(id);
-                    String geneSymbol = genes.getGeneSymbol();
-                    log.info("                " + id + "                 " + geneSymbol);
+                if( missingRefSeqCount>0 ) {
+                    log.info("Please Update the Database for Missing RefSeq and Run this CODE again.");
+                    log.info("See the MAIN LOG FOR MORE INFO. ");
+                    log.info("**********MISSING REFSEQ TRANSCRIPT RGD IDS and SYMBOLS***********");
+                    for (int id : missingRefSeqIds) {
+                        Genes genes = dao.getGeneSymbols(id);
+                        String geneSymbol = genes.getGeneSymbol();
+                        log.info("                " + id + "                 " + geneSymbol);
+                    }
+                    log.info("");
                 }
-                if (multistopcodonVariantCount == 0) {
-                    continue;
-                } else {
+
+                log.info("TOTAL NUMBER OF MULTI STOP CODON SEQUENCES OF CHROMOSOME " + chr + " : " + multistopcodonVariantCount);
+                if (multistopcodonVariantCount>0) {
                     log.info("******MULTI STOP CODON TranscriptRGDIds and GENE Symbols on Chromosome: " + chr +"**********");
                     log.info("Variant RGD ID **** Transcript RGD ID **** GENE SYMBOL ***** PROTEIN ACC ID");
 
@@ -120,6 +123,7 @@ public class Manager {
                             dao.updateVariantTranscript(variantRgdId, transcriptRgdId, mapkey);
                         }
                     }
+                    log.info("");
                 }
             }
         }
