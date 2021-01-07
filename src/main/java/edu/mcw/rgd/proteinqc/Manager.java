@@ -67,35 +67,40 @@ public class Manager {
         boolean isNormalMode = mode.equals("NORMAL RUN");
 
         log.info("MODE: "+mode);
-        log.info("=========================================================================================");
+        log.info("============================================================================");
         log.info("**PROTEIN SEQUENCE ANALYSIS TO GENERATE MULTI STOP CODON SEQUENCE DATA FOR**");
         log.info("\t\t QUALITY CONTROL ON ALL EXISTING RGD ASSEMBLIES ****");
-        log.info("==================================================================================================================================");
+        log.info("============================================================================");
 
         DAO dao = new DAO();
         List<Integer> mapkeys = new ArrayList<>(Arrays.asList(60, 70, 360));
         for(int mapkey : mapkeys) {
+            int totalMissingRefSeqCount = 0;
+            int totalMultiStopCodonEntries = 0;
             String mapKeyName = dao.getMapName(mapkey);
+            log.info("");
+            log.info("");
             log.info("GENERATING MULTI STOP CODON REPORT FOR  " + mapKeyName + "  CHROMOSOME WISE...");
-            log.info("====================================================================================================");
+            log.info("============================================================================");
             TranscriptAnalysisMethods transcriptAnalysisMethods = new TranscriptAnalysisMethods();
             // GET MULTI STOP CODON TRANSCRIPTS FOR ONE WHOLE ASSEMBLY AT A TIME
+            int vtEntriesAnalyzed = 0;
             List<TranscriptData> transcriptDataList= transcriptAnalysisMethods.getMultiStopCodonTranscripts(mapkey, dao);
             log.info("transcripts data loaded: "+transcriptDataList.size());
             for(TranscriptData trData: transcriptDataList) {
                 String chr = trData.getChromosome();
+                vtEntriesAnalyzed += trData.getVtEntriesAnalyzed();
+                log.info("============================================================================");
                 log.info("CHROMOSOME: " + chr);
-                log.info("====================================================================");
                 Set<String> multiStopCodonVariantIds = trData.getMultiStopCodonVariantTranscriptIds();
                 Set<Integer> missingRefSeqIds = trData.getMissingRefSeqIds();
                 int missingRefSeqCount = trData.getMissingRefSeqCount();
+                totalMissingRefSeqCount += missingRefSeqCount;
+
                 int multistopcodonVariantCount = multiStopCodonVariantIds.size();
+                totalMultiStopCodonEntries += multistopcodonVariantCount;
 
                 log.info("Missing RefSeq Count: " + missingRefSeqCount);
-                if( missingRefSeqCount>0 ) {
-                    log.info("   Please Update the Database for Missing RefSeq and Run this CODE again.");
-                    log.info("   See the MAIN LOG FOR MORE INFO. ");
-                }
                 if( missingRefSeqCount>0 ) {
                     log.debug("**********MISSING REFSEQ TRANSCRIPT RGD IDS and SYMBOLS***********");
                     for (int id : missingRefSeqIds) {
@@ -128,8 +133,18 @@ public class Manager {
                     log.debug("");
                 }
             }
+
+            log.info("============================================================================");
+            log.info("Total VARIANT_TRANSCRIPT rows processed for assembly "+mapKeyName+": " + vtEntriesAnalyzed);
+            log.info("Total Missing RefSeq Count for assembly "+mapKeyName+": " + totalMissingRefSeqCount);
+            if( totalMissingRefSeqCount>0 ) {
+                log.info("   Please Update the Database for Missing RefSeq and Run this CODE again.");
+                log.info("   See the MAIN LOG FOR MORE INFO. ");
+            }
+            log.info("Total Multi Stop Codon Entries for assembly "+mapKeyName+": " + totalMultiStopCodonEntries);
         }
 
+        log.info("");
         if( isNormalMode ) {
             log.info("DATABASE UPDATE COMPLETED ON ALL ASSEMBLIES FOR REPORTED LIST OF GENES OF MULTISTOP CODON TRANSCRIPTS");
         } else {

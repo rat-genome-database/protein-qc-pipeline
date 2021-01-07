@@ -22,7 +22,6 @@ public class TranscriptAnalysisMethods {
             int equal = 0;
             int notEqual = 0;
             int emptySeq = 0;
-            int transcripts = 0;
             int noProteinSeq = 0;
             int emptyVT = 0;
             int i = 0;
@@ -34,43 +33,38 @@ public class TranscriptAnalysisMethods {
             log.debug("  vtList size "+vtList.size());
 
             for (VariantTranscript vt : vtList) {
-                if (vt != null) {
-                    String aminoAcidSeq = vt.getAaSequence();
-                    String aaSeq;
-                    String lastCharacter = aminoAcidSeq.substring(aminoAcidSeq.length() - 1);
-                    if (lastCharacter.equals("*")) {
-                        aaSeq = aminoAcidSeq.substring(0, aminoAcidSeq.length() - 1);
-                    } else aaSeq = aminoAcidSeq;
-                    int transcript_rgd_id = vt.getTranscriptRgdId();
-                    int variant_rgd_id = vt.getVariantRgdId();
-                    List<Sequence> sequences = dao.getNcbiProteinSequences(transcript_rgd_id);
-                    if (!sequences.isEmpty()) {
-                        for (Sequence sequence : sequences) {
-                            String RefSeq = sequence.getSeqData();
-                            if (RefSeq.equals(aaSeq)) {
-                                equal = equal + 1;
-                            } else {
-                                notEqual = notEqual + 1;
-                                int stopCodon = 0;
-                                for (int j = 0; j < aaSeq.length() && j < RefSeq.length(); j++) {
-                                    if (aaSeq.charAt(j) != RefSeq.charAt(j) && aaSeq.charAt(j) == '*')
-                                        stopCodon = stopCodon + 1;
-                                }
-                                if (stopCodon > 1) {
-                                    multipleStopCodonSeq = multipleStopCodonSeq + 1;
-                                    variantTranscriptIdSet.add(variant_rgd_id+","+transcript_rgd_id);
-                                }
+                String aminoAcidSeq = vt.getAaSequence();
+                String aaSeq;
+                String lastCharacter = aminoAcidSeq.substring(aminoAcidSeq.length() - 1);
+                if (lastCharacter.equals("*")) {
+                    aaSeq = aminoAcidSeq.substring(0, aminoAcidSeq.length() - 1);
+                } else aaSeq = aminoAcidSeq;
+                int transcript_rgd_id = vt.getTranscriptRgdId();
+                int variant_rgd_id = vt.getVariantRgdId();
+                List<Sequence> sequences = dao.getNcbiProteinSequences(transcript_rgd_id);
+                if (!sequences.isEmpty()) {
+                    for (Sequence sequence : sequences) {
+                        String RefSeq = sequence.getSeqData();
+                        if (RefSeq.equals(aaSeq)) {
+                            equal = equal + 1;
+                        } else {
+                            notEqual = notEqual + 1;
+                            int stopCodon = 0;
+                            for (int j = 0; j < aaSeq.length() && j < RefSeq.length(); j++) {
+                                if (aaSeq.charAt(j) != RefSeq.charAt(j) && aaSeq.charAt(j) == '*')
+                                    stopCodon = stopCodon + 1;
+                            }
+                            if (stopCodon > 1) {
+                                multipleStopCodonSeq = multipleStopCodonSeq + 1;
+                                variantTranscriptIdSet.add(variant_rgd_id+","+transcript_rgd_id);
                             }
                         }
-                    } else {
-                        emptySeq = emptySeq + 1;
-                        missingRefSeqIds.add(transcript_rgd_id);
                     }
-                    i = i + 1;
-
                 } else {
-                    transcripts = transcripts + 1;
+                    emptySeq = emptySeq + 1;
+                    missingRefSeqIds.add(transcript_rgd_id);
                 }
+                i = i + 1;
             }
             Set<Integer> missingRefSeqIdsSet = new HashSet<>(missingRefSeqIds);
 
@@ -81,7 +75,7 @@ public class TranscriptAnalysisMethods {
             transcriptData.setMissingRefSeqIds(missingRefSeqIdsSet);
             transcriptData.setNoProteinSeqCount(noProteinSeq);
 
-            transcriptData.setMissingVtranscriptCount(transcripts);
+            transcriptData.setVtEntriesAnalyzed(vtList.size());
             transcriptData.setEmptyVTCount(emptyVT);
             transcriptDatas.add(transcriptData);
         }
