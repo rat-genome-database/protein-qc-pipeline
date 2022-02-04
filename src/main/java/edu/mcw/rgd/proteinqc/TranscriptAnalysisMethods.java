@@ -2,7 +2,8 @@ package edu.mcw.rgd.proteinqc;
 
 import edu.mcw.rgd.datamodel.Chromosome;
 import edu.mcw.rgd.datamodel.Sequence;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
@@ -11,7 +12,7 @@ import java.util.*;
  */
 public class TranscriptAnalysisMethods {
 
-    Logger log = Logger.getLogger("main");
+    Logger log = LogManager.getLogger("status");
 
     public List<TranscriptData> getMultiStopCodonTranscripts(int mapkey, DAO dao) throws Exception {
         List<TranscriptData> transcriptDatas = new ArrayList<>();

@@ -9,7 +9,7 @@ if [ "$SERVER" = "REED" ]; then
 fi
 
 cd $APPDIR
-java -Dlog4j.configuration=file://$APPDIR/properties/log4j.properties \
+java -Dlog4j.configurationFile=file://$APPDIR/properties/log4j2.xml \
   -Dspring.config=../properties/default_db2.xml \
   -jar lib/ProteinQcPipeline.jar $1 $2 $3 $4 $5 | tee run.log
 
