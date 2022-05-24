@@ -97,18 +97,12 @@ public class DAO {
 
     public String getAaSequence(int seqKey) {
 
-        List<Sequence> seqs = null;
+        List<Sequence> seqs;
         try {
             seqs = seqDAO.getObjectSequencesBySeqKey(seqKey);
 
             // filter out sequences of type other than 'full_ref_aa'
-            Iterator<Sequence> it = seqs.iterator();
-            while( it.hasNext() ) {
-                Sequence seq = it.next();
-                if( !seq.getSeqType().startsWith("full_ref_aa") ) {
-                    it.remove();
-                }
-            }
+            seqs.removeIf(seq -> !seq.getSeqType().startsWith("full_ref_aa"));
         } catch(Exception e) {
             throw new RuntimeException(e);
         }

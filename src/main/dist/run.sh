@@ -1,7 +1,7 @@
 # runs the pipeline
 
 . /etc/profile
-APPDIR=/home/rgddata/pipelines/ProteinQcPipeline
+APPDIR=/home/rgddata/pipelines/protein-qc-pipeline
 SERVER=`hostname -s | tr '[a-z]' '[A-Z]'`
 EMAIL_LIST=mtutaj@mcw.edu,jthota@mcw.edu
 if [ "$SERVER" = "REED" ]; then
