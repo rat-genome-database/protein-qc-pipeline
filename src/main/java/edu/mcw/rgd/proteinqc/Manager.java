@@ -48,7 +48,7 @@ public class Manager {
 
     void printUsageAndExit() {
         System.out.println("Usage:");
-        System.out.println("  java -jar ProteinQcPipeline.jar -dryRun|-normalRun");
+        System.out.println("  java -jar lib/protein-qc-pipeline.jar -dryRun|-normalRun");
         System.out.println("    -dryRun    simulate the run, no changes are made to database (default mode)");
         System.out.println("    -normalRun normal run");
         System.exit(-1);
