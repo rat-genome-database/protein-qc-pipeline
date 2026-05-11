@@ -1,5 +1,6 @@
 package edu.mcw.rgd.proteinqc;
 
+import edu.mcw.rgd.process.MemoryMonitor;
 import edu.mcw.rgd.process.Utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -66,6 +67,9 @@ public class Manager {
             return;
         }
         boolean isNormalMode = mode.equals("NORMAL RUN");
+
+        MemoryMonitor memoryMonitor = new MemoryMonitor();
+        memoryMonitor.start();
 
         log.info("MODE: "+mode);
         log.info("============================================================================");
@@ -152,6 +156,9 @@ public class Manager {
             log.info("REPORT GENERATION COMPLETED.");
             log.info(" dryRun completed Successfully");
         }
+
+        memoryMonitor.stop();
+        log.info(memoryMonitor.getSummary());
     }
 
     public void setVersion(String version) { this.version = version;    }
