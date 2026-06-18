@@ -1,3 +1,6 @@
+Jun 18, 2026
+  removed dead code (unused counters, fields, imports, commented-out SQL); updated dependencies
+
 May 11, 2026
   added MemoryMonitor; updated dependencies
 

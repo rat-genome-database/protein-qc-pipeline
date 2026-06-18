@@ -20,13 +20,7 @@ public class TranscriptAnalysisMethods {
         List<Chromosome> chrList = dao.getChromosomes(mapkey);
         for (Chromosome chromosome : chrList) {
             log.debug("chr "+chromosome.getChromosome());
-            int equal = 0;
-            int notEqual = 0;
             int emptySeq = 0;
-            int noProteinSeq = 0;
-            int emptyVT = 0;
-            int i = 0;
-            int multipleStopCodonSeq = 0;
             Set<String> variantTranscriptIdSet = new HashSet<>(); // 'variantRgdId,transcriptRgdId'
             List<Integer> missingRefSeqIds = new ArrayList<>();
             String chr = chromosome.getChromosome();
@@ -46,17 +40,13 @@ public class TranscriptAnalysisMethods {
                 if (!sequences.isEmpty()) {
                     for (Sequence sequence : sequences) {
                         String RefSeq = sequence.getSeqData();
-                        if (RefSeq.equals(aaSeq)) {
-                            equal = equal + 1;
-                        } else {
-                            notEqual = notEqual + 1;
+                        if (!RefSeq.equals(aaSeq)) {
                             int stopCodon = 0;
                             for (int j = 0; j < aaSeq.length() && j < RefSeq.length(); j++) {
                                 if (aaSeq.charAt(j) != RefSeq.charAt(j) && aaSeq.charAt(j) == '*')
                                     stopCodon = stopCodon + 1;
                             }
                             if (stopCodon > 1) {
-                                multipleStopCodonSeq = multipleStopCodonSeq + 1;
                                 variantTranscriptIdSet.add(variant_rgd_id+","+transcript_rgd_id);
                             }
                         }
@@ -65,7 +55,6 @@ public class TranscriptAnalysisMethods {
                     emptySeq = emptySeq + 1;
                     missingRefSeqIds.add(transcript_rgd_id);
                 }
-                i = i + 1;
             }
             Set<Integer> missingRefSeqIdsSet = new HashSet<>(missingRefSeqIds);
 
@@ -74,10 +63,7 @@ public class TranscriptAnalysisMethods {
             transcriptData.setChromosome(chr);
             transcriptData.setMissingRefSeqCount(emptySeq);
             transcriptData.setMissingRefSeqIds(missingRefSeqIdsSet);
-            transcriptData.setNoProteinSeqCount(noProteinSeq);
-
             transcriptData.setVtEntriesAnalyzed(vtList.size());
-            transcriptData.setEmptyVTCount(emptyVT);
             transcriptDatas.add(transcriptData);
         }
 

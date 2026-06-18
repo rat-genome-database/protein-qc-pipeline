@@ -2,7 +2,7 @@
 
 <beans>
     <bean id="manager" class="edu.mcw.rgd.proteinqc.Manager" >
-        <property name="version" value="protein-qc-pipeline   -- build May 11, 2026" />
+        <property name="version" value="protein-qc-pipeline   -- build Jun 18, 2026" />
     </bean>
 
 </beans>

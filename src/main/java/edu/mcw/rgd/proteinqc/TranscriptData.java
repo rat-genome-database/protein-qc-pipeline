@@ -10,9 +10,7 @@ public class TranscriptData {
     private String chromosome;
     private int missingRefSeqCount;
     private Set<Integer> missingRefSeqIds;
-    private int noProteinSeqCount;
     private int vtEntriesAnalyzed;
-    private int emptyVTCount;
 
     public void setMultiStopCodonVariantTranscriptIds(Set<String> multiStopCodonVariantTranscriptIds){this.multiStopCodonVariantTranscriptIds=multiStopCodonVariantTranscriptIds;}
     public Set<String> getMultiStopCodonVariantTranscriptIds(){return this.multiStopCodonVariantTranscriptIds;}
@@ -23,11 +21,7 @@ public class TranscriptData {
     public int getMissingRefSeqCount(){return this.missingRefSeqCount;}
     public void setMissingRefSeqIds(Set<Integer> missingRefSeqIds){this.missingRefSeqIds = missingRefSeqIds;}
     public Set<Integer> getMissingRefSeqIds(){ return this.missingRefSeqIds;}
-    public void setNoProteinSeqCount(int noProteinSeqCount){this.noProteinSeqCount=noProteinSeqCount;}
-    public int getNoProteinSeqCount(){return this.noProteinSeqCount;}
     public void setVtEntriesAnalyzed(int cnt){this.vtEntriesAnalyzed=cnt;}
     public int getVtEntriesAnalyzed(){return this.vtEntriesAnalyzed;}
-    public void setEmptyVTCount(int emptyVTCount){this.emptyVTCount=emptyVTCount;}
-    public int getEmptyVTCount(){return this.emptyVTCount;}
 
 }

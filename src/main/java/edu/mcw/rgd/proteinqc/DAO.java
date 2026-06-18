@@ -14,7 +14,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Iterator;
 import java.util.List;
 
 public class DAO {
@@ -49,9 +48,6 @@ public class DAO {
     }
 
     public List getVariantTranscripts(String chr, int mapkey) throws Exception{
-//        String sql = "SELECT vt.* FROM variant_transcript vt, variant v WHERE v.variant_id = vt.variant_id "+
-//                "AND sample_id IN (select sample_id from sample where map_key=?) AND chromosome=? "+
-//                "AND full_ref_aa is not null";
 
         String sql = "SELECT vt.variant_rgd_id,transcript_rgd_id,full_ref_aa_seq_key " +
                 "FROM variant_transcript vt, variant_map_data m " +
@@ -73,9 +69,6 @@ public class DAO {
     }
 
     public int updateVariantTranscript(int variantRgdId, int transcriptRgdId, int mapKey) throws Exception{
-//        String sql="UPDATE variant_transcript SET full_ref_aa=null, full_ref_nuc=null, location_name='Unknown', syn_status='Unknown', "+
-//               "ref_aa=null, var_aa=null, full_ref_aa_pos=null,full_ref_nuc_pos=null, near_splice_site=null,frameshift=null "+
-//                "WHERE variant_transcript_id=?";
 
         String sql="UPDATE variant_transcript SET full_ref_aa_seq_key=null, full_ref_nuc_seq_key=null, location_name='Unknown', syn_status='Unknown', "+
                "ref_aa=null, var_aa=null, full_ref_aa_pos=null,full_ref_nuc_pos=null, near_splice_site=null,frameshift=null "+

@@ -63,9 +63,6 @@ public class Manager {
      */
     public void run(String mode) throws Exception{
 
-        if( mode==null ) {
-            return;
-        }
         boolean isNormalMode = mode.equals("NORMAL RUN");
 
         MemoryMonitor memoryMonitor = new MemoryMonitor();
